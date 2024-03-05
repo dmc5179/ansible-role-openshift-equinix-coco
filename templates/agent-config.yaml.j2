@@ -1,0 +1,34 @@
+apiVersion: v1alpha1
+kind: AgentConfig
+metadata:
+  name: equinix-cluster
+rendezvousIP: {{ rendezvoud_ip }}
+bootArtifactsBaseURL: {{ ipxe_script_url }}
+hosts:
+  - hostname: {{ sno_hostname }}
+    interfaces:
+      - name: {{ nic_device_name }}
+        macAddress: {{ mac_addr }}
+    networkConfig:
+      interfaces:
+        - name: {{ nic_device_name }}
+          type: ethernet
+          state: up
+          mac-address: {{ mac_addr }}
+          ipv4:
+            enabled: true
+#            address:
+#              - ip: 
+#                prefix-length:
+            dhcp: true
+#      dns-resolver:
+#        config:
+#          server:
+#            - 147.75.207.207
+#            - 147.75.207.208
+#      routes:
+#        config:
+#          - destination: 0.0.0.0/0
+#            next-hop-address: 
+#            next-hop-interface: {{ nic_device_name }}
+#            table-id: 254

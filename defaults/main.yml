@@ -12,3 +12,17 @@ ip_device_uuid:
 metro: "dc13"
 sno_hostname: "openshift-equinix"
 instance_type: 'c3.medium.x86'
+
+# This will be initialized with a set_fact task
+#mac_addr:
+# This will be initialized with a set_fact task
+#rendezvoud_ip:
+
+# Location of the iPXE files created by the openshift agent installer
+ipxe_script_url:
+
+base_domain:
+machine_network_cidr:
+
+ssh_key:
+pull_secret:

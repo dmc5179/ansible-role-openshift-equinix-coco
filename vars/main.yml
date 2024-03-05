@@ -8,3 +8,5 @@ pxe_files:
   - 'agent.x86_64-vmlinuz'
 
 operating_system: 'custom_ipxe'
+
+nic_device_name: eth0
