@@ -1,2 +1,14 @@
 ---
 # defaults file for openshift-equinix-coco
+
+# Equinix Metal API Token
+metal_api_token:
+# Equinix Project ID
+project_id:
+# Equinix Organization ID
+org_id:
+# UUID of the elastic IP device
+ip_device_uuid:
+metro: "dc13"
+sno_hostname: "openshift-equinix"
+instance_type: 'c3.medium.x86'

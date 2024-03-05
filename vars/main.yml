@@ -1,2 +1,10 @@
 ---
 # vars file for openshift-equinix-coco
+
+pxe_files:
+  - 'agent.x86_64-initrd.img'
+  - 'agent.x86_64.ipxe'
+  - 'agent.x86_64-rootfs.img'
+  - 'agent.x86_64-vmlinuz'
+
+operating_system: 'custom_ipxe'

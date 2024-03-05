@@ -1,2 +1,11 @@
 ---
 # tasks file for openshift-equinix-coco
+
+- name: Create OpenShift bare metal device
+  delegate_to: localhost
+  equinix.metal.device:
+    project_id: {{ project_id }}
+    hostnames: {{ sno_hostname }}
+    operating_system: {{ operating_system }}
+    plan: {{ instance_type }}
+    facility: {{ metro }}
