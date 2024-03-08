@@ -10,3 +10,7 @@ pxe_files:
 operating_system: 'custom_ipxe'
 
 nic_device_name: eth0
+
+openshift_install: "/usr/local/bin/openshift-install-4.14.7"
+
+aws_ssl_enabled: true

@@ -1,0 +1,27 @@
+{
+    "plan": "{{ instance_type }}",
+    "operating_system": "custom_ipxe",
+    "always_pxe": "false",
+    "ipxe_script_url": "{{ ipxe_base_url }}/agent.x86_64.ipxe",
+    "metro": "{{ metro }}",
+    "hostname": "{{ sno_hostname }}",
+    "ip_addresses": [
+        {
+            "type": "public_ipv4",
+            "address_family": 4,
+            "public": true,
+            "cidr": "31",
+            "ip_reservations": ["{{ ip_device_uuid }}"]
+        },
+        {
+            "type": "private_ipv4",
+            "address_family": 4,
+            "public": false 
+        },
+        {
+            "type": "public_ipv6",
+            "address_family": 6,
+            "public": false
+        }
+    ]
+}

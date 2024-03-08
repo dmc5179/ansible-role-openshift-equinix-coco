@@ -29,5 +29,5 @@ BootstrapInPlace:
   InstallationDisk: /dev/sda
 publish: External
 fips: false
-pullSecret: '{{ pull_secret }}'
-sshKey: '{{ ssh_key }}"
+pullSecret: '{{ slurped_pull_secret_b64.content | b64decode | trim }}'
+sshKey: '{{ slurped_key_b64.content | b64decode | trim }}'

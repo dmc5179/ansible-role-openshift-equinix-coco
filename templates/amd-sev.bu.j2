@@ -1,0 +1,9 @@
+variant: openshift
+version: 4.14.0
+metadata:
+  name: 99-master-amd-sev
+  labels:
+    machineconfiguration.openshift.io/role: master
+openshift:
+  kernel_arguments:
+    - kvm_amd.sev=1

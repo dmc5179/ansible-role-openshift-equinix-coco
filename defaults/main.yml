@@ -4,25 +4,29 @@
 # Equinix Metal API Token
 metal_api_token:
 # Equinix Project ID
-project_id:
+project_id: ''
 # Equinix Organization ID
-org_id:
+org_id: ''
 # UUID of the elastic IP device
-ip_device_uuid:
-metro: "dc13"
+ip_device_uuid: ''
+metro: "dc"
 sno_hostname: "openshift-equinix"
 instance_type: 'c3.medium.x86'
 
-# This will be initialized with a set_fact task
-#mac_addr:
-# This will be initialized with a set_fact task
-#rendezvoud_ip:
+s3_bucket: ""
+s3_path: "ipxe"
+route53_hosted_zone: ""
 
 # Location of the iPXE files created by the openshift agent installer
-ipxe_script_url:
+ipxe_base_url: "https://{{ s3_bucket }}.s3.amazonaws.com/{{ s3_path }}"
 
-base_domain:
-machine_network_cidr:
+ignition_configs: "/tmp/equinix"
 
-ssh_key:
-pull_secret:
+ssh_key_file: ""
+pull_secret: ""
+
+base_domain: ''
+
+# These will be initialized with a set_fact task
+rendezvous_ip: 
+machine_network_cidr: 

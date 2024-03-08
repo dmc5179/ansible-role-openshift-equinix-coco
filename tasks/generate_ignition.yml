@@ -1,0 +1,93 @@
+---
+# tasks file for generate_ignition
+
+- name: Remove existing ignition configs
+  file:
+    path: "{{ ignition_configs }}"
+    state: absent
+
+- name: Create ignition configs directory
+  file:
+    path: "{{ ignition_configs }}"
+    state: directory
+    mode: '0755'
+
+- name: Fetch public key
+  slurp:
+    src: '{{ ssh_key_file }}.pub'
+  register: slurped_key_b64
+
+- name: Fetch pull secret
+  slurp:
+    src: "{{ pull_secret }}"
+  register: slurped_pull_secret_b64
+
+- name: Copy template install-config.yaml
+  template:
+    src: install-config.yaml.j2
+    dest: "{{ ignition_configs }}/install-config.yaml"
+    mode: 0664
+
+#- name: Remove existing install-config.yaml save
+#  file:
+#    path: '{{ mirror_base }}/{{ ocp_cluster_name }}-install-config.yaml'
+#    state: absent
+
+#- name: Save install-config.yaml
+#  copy:
+#    src: "{{ ignition_configs }}/install-config.yaml"
+#    dest: '{{ mirror_base }}/{{ ocp_cluster_name }}-install-config.yaml'
+#    remote_src: true
+
+- name: Copy template agent-config.yaml
+  template:
+    src: agent-config.yaml.j2
+    dest: "{{ ignition_configs }}/agent-config.yaml"
+    mode: 0664
+
+#- name: Remove existing agent-config.yaml save
+#  file:
+#    path: '{{ mirror_base }}/{{ ocp_cluster_name }}-agent-config.yaml'
+#    state: absent
+
+#- name: Save agent-config.yaml
+#  copy:
+#    src: "{{ ignition_configs }}/agent-config.yaml"
+#    dest: '{{ mirror_base }}/{{ ocp_cluster_name }}-agent-config.yaml'
+#    remote_src: true
+
+#- fail:
+
+- name: Create PXE files
+  shell: "{{ openshift_install }} agent create pxe-files --dir={{ ignition_configs }}"
+
+- name: Add kernel arguments to PXE files
+  shell: awk '/^kernel /{$0=$0" console=tty0 console=ttyS1,115200 intel_iommu=on iommu=pt net.ifnames=0 biosdevname=0 kvm_amd.sev=1"}{print}' "{{ ignition_configs }}/boot-artifacts/agent.x86_64.ipxe"
+  register: install_config_spaced
+
+- name: Replace iPXE script with new version adding kernel arguments
+  copy:
+    content: "{{ install_config_spaced.stdout }}"
+    dest: "{{ ignition_configs }}/boot-artifacts/agent.x86_64.ipxe"
+    force: true
+
+#- name: Stop after creating PXE config files
+#  fail:
+#    msg: "Stop after creating PXE config"
+
+#- name: Create kube config location
+#  file:
+#    path: "{{ kubeconfig | dirname }}"
+#    state: directory
+#    mode: '0755'
+#
+#- name: Remove existing kube config
+#  file:
+#    path: "{{ kubeconfig }}"
+#    state: absent
+#
+#- name: Set kube config
+#  copy:
+#    src: "{{ ignition_configs }}/auth/kubeconfig"
+#    dest: "{{ kubeconfig }}"
+#    remote_src: true

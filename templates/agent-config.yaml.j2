@@ -2,8 +2,8 @@ apiVersion: v1alpha1
 kind: AgentConfig
 metadata:
   name: equinix-cluster
-rendezvousIP: {{ rendezvoud_ip }}
-bootArtifactsBaseURL: {{ ipxe_script_url }}
+rendezvousIP: {{ rendezvous_ip }}
+bootArtifactsBaseURL: {{ ipxe_base_url }}
 hosts:
   - hostname: {{ sno_hostname }}
     interfaces:

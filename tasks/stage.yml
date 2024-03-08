@@ -1,0 +1,22 @@
+---
+
+- name: Stage Ignition configs (S3)
+  delegate_to: localhost
+  amazon.aws.aws_s3:
+    aws_access_key: "{{ ansible_env.AWS_ACCESS_KEY_ID | default(omit) }}"
+    aws_secret_key: "{{ ansible_env.AWS_SECRET_ACCESS_KEY | default(omit) }}"
+    security_token: "{{ ansible_env.AWS_SESSION_TOKEN | default(omit) }}"
+    region: "{{ ansible_env.AWS_DEFAULT_REGION | default(omit) }}"
+    s3_url: "{{ s3_endpoint | default(omit) }}"
+    validate_certs: "{{ aws_ssl_enabled }}"
+    bucket: "{{ s3_bucket }}"
+    object: "{{ s3_path }}/{{ item }}"
+    src: "{{ ignition_configs }}/boot-artifacts/{{ item }}"
+    mode: put
+    permission: "public-read"
+    overwrite: "always"
+  loop:
+    - 'agent.x86_64-initrd.img'
+    - 'agent.x86_64.ipxe'
+    - 'agent.x86_64-rootfs.img'
+    - 'agent.x86_64-vmlinuz'

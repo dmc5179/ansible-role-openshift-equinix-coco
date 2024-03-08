@@ -1,11 +1,81 @@
 ---
 # tasks file for openshift-equinix-coco
 
-- name: Create OpenShift bare metal device
+- include_vars:
+    file: results.json
+    name: mydata
+
+- name: Include vars
+  ansible.builtin.include_vars:
+    file: /home/danclark/.config/equinix/metal.yaml
+    name: equinix_env
+
+- set_fact:
+#    project_id: "{{ equinix_env.project-id }}"
+    equinix_api_token: "{{ equinix_env.token }}"
+
+# TODO: metal_device module doesn't have enough options
+#- name: Create OpenShift bare metal device for SNO
+#  delegate_to: localhost
+#  register: equinix_sno_device_info
+#  equinix.cloud.metal_device:
+#    project_id: "{{ project_id }}"
+#    hostnames: "{{ sno_hostname }}"
+#    operating_system: "{{ operating_system }}"
+#    plan: "{{ instance_type }}"
+#    metro: "{{ metro }}"
+#    #api_token: "{{ equinix_api_token }}"
+#    metal_api_token: "{{ equinix_api_token }}"
+#    count: 1
+#    ipxe_script_url: "{{ ipxe_base_url }}/agent.x86_64.ipxe"
+#    state: active
+#    ip_addresses:
+#      - address: public_ipv4
+#        address_family: 4
+#        public: true
+#      - address: public_ipv4
+#        address_family: 4
+#        public: true
+#      - address: public_ipv4
+#        address_family: 4
+#        public: true
+#    ip_addresses: { "ip_addresses": [{"type":"public_ipv4","address_family":4,"public":true,"cidr":"31","ip_reservations":["5b136eb2-7f98-45d1-9a89-11e4ccdd25b8"]},{"type":"private_ipv4","address_family":4,"public":false},{"type":"public_ipv6","address_family":6,"public":false}] }
+
+- name: Create OpenShift bare metal device for SNO
   delegate_to: localhost
-  equinix.metal.device:
-    project_id: {{ project_id }}
-    hostnames: {{ sno_hostname }}
-    operating_system: {{ operating_system }}
-    plan: {{ instance_type }}
-    facility: {{ metro }}
+  register: equinix_sno_device_info
+  ansible.builtin.uri:
+    url: https://api.equinix.com/metal/v1/projects/{{ project_id }}/devices
+    method: POST
+    body: "{{ lookup('template','create_machine.json.j2') }}"
+    body_format: json
+    status_code: 201
+    headers:
+      Content-Type: "application/json"
+      X-Auth-Token: "{{ equinix_api_token }}"
+
+#- debug:
+#    var: equinix_sno_device_info
+
+- name: Get MAC addresses
+  ansible.builtin.set_fact:
+    mac_addrs: "{{ equinix_sno_device_info.json | community.general.json_query('network_ports[?name==`eth0`].data.mac') }}"
+
+- name: Show mac addresses
+  debug:
+    var: mac_addrs
+
+- name: Get MAC address
+  ansible.builtin.set_fact:
+    mac_addr: "{{ mac_addrs[0] }}"
+
+#- debug:
+#    var: mac_addr
+
+#- fail:
+
+- name: Generate PXE configs
+  import_tasks: generate_ignition.yml
+
+- name: Stage PXE file in S3
+  import_tasks: stage.yml
